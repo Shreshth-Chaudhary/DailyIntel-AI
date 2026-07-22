@@ -3,7 +3,7 @@ import { Article, DailyBriefing, PracticeSuite } from '../types';
 import { INITIAL_ARTICLES, INITIAL_BRIEFING, INITIAL_PRACTICE_SUITE } from './mock-db';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || '';
 
 export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
 
