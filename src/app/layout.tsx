@@ -2,10 +2,19 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'DailyIntel AI — AI-Powered Daily Intelligence Platform for UPSC & Defence',
-  description: 'Personalized Daily Intelligence Platform that automatically collects, filters, summarizes, categorizes, and delivers high-signal news relevant for UPSC CSE, CDS, CAPF, Defence, Economy, AI & Technology.',
-  keywords: ['UPSC Current Affairs', 'CDS Exam News', 'CAPF AC', 'DRDO', 'ISRO', 'RBI Repo Rate', 'Daily Intelligence', 'Defence News India'],
-  authors: [{ name: 'DailyIntel AI Team' }],
+  title: 'DailyIntel AI - Current Affairs & Exam Intelligence',
+  description: 'Clean, minimal current affairs intelligence platform for UPSC CSE, CDS, CAPF, Defence & Economy. Created by Shreshth Chaudhary.',
+  keywords: ['Shreshth Chaudhary', 'DailyIntel AI', 'UPSC Current Affairs', 'CDS Exam News', 'CAPF AC', 'Defence Intelligence'],
+  authors: [{ name: 'Shreshth Chaudhary', url: 'https://github.com/Shreshth-Chaudhary' }],
+  creator: 'Shreshth Chaudhary',
+  icons: {
+    icon: [
+      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+    shortcut: '/icon.svg',
+    apple: '/icon.svg',
+  },
 };
 
 export default function RootLayout({
@@ -14,8 +23,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
-      <body className="bg-bloomberg-bg text-slate-100 min-h-screen font-sans antialiased bloomberg-grid selection:bg-intel-500 selection:text-white">
+    <html lang="en">
+      <head>
+        <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+        <link rel="alternate icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta name="author" content="Shreshth Chaudhary" />
+      </head>
+      <body className="antialiased selection:bg-[#7a5c48] selection:text-white">
         {children}
       </body>
     </html>

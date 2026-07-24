@@ -22,7 +22,9 @@ export const NewsTimeline: React.FC<NewsTimelineProps> = ({ articles, onSelectAr
           <Clock size={16} className="text-bloomberg-amber" />
           DAILY NEWS CHRONOLOGICAL TIMELINE
         </h3>
-        <span className="text-xs font-mono text-slate-400">JULY 22, 2026</span>
+        <span className="text-xs font-mono text-slate-400 font-semibold">
+          {sortedArticles[0] ? new Date(sortedArticles[0].publishedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase() : 'LIVE CHRONOLOGY'}
+        </span>
       </div>
 
       <div className="relative border-l-2 border-slate-800 ml-4 pl-6 space-y-6">

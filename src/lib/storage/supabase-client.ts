@@ -99,3 +99,33 @@ export async function getPracticeSuite(): Promise<PracticeSuite> {
 
   return INITIAL_PRACTICE_SUITE;
 }
+
+/**
+ * Stores AI fact-checked verified articles directly into Supabase database
+ */
+export async function storeVerifiedArticlesInSupabase(articles: Article[]): Promise<boolean> {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { error } = await supabase
+        .from('articles')
+        .upsert(articles, { onConflict: 'id' });
+      if (error) {
+        console.warn('Supabase articles upsert warning:', error.message);
+      } else {
+        console.log(`Successfully stored ${articles.length} AI fact-checked articles in Supabase.`);
+        return true;
+      }
+    } catch (err) {
+      console.warn('Supabase storeVerifiedArticlesInSupabase error:', err);
+    }
+  }
+
+  // Backup in browser localStorage if in browser environment
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem(STORAGE_KEYS.ARTICLES, JSON.stringify(articles));
+    } catch (e) {}
+  }
+
+  return false;
+}

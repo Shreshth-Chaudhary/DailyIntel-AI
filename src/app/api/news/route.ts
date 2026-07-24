@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getArticles } from '@/lib/storage/supabase-client';
+import { getArticles, storeVerifiedArticlesInSupabase } from '@/lib/storage/supabase-client';
 import { fetchLiveRssArticles } from '@/lib/news-ingestion/parser';
+import { batchVerifyArticlesWithAI } from '@/lib/news-ingestion/ai-verifier';
+
+// Server-Side In-Memory Cache for Live RSS Feed (5-minute TTL)
+let cachedLiveRss: any[] = [];
+let lastRssFetchTime = 0;
+const RSS_CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 
 export async function GET(req: NextRequest) {
   try {
@@ -9,14 +15,28 @@ export async function GET(req: NextRequest) {
     const exam = searchParams.get('exam');
     const query = searchParams.get('q');
     const ministry = searchParams.get('ministry');
-    const live = searchParams.get('live') === 'true';
+    const live = searchParams.get('live') !== 'false'; // Enabled by default for real-time news
 
     let articles = await getArticles();
 
     if (live) {
-      const freshRss = await fetchLiveRssArticles();
-      if (freshRss.length > 0) {
-        articles = [...freshRss, ...articles];
+      const now = Date.now();
+      if (cachedLiveRss.length > 0 && (now - lastRssFetchTime < RSS_CACHE_TTL_MS)) {
+        // Use cached live RSS feeds
+        articles = [...cachedLiveRss, ...articles];
+      } else {
+        const freshRss = await fetchLiveRssArticles();
+        if (freshRss.length > 0) {
+          // Server-side AI fact-check and isolate facts for fresh RSS items
+          const verifiedRss = await batchVerifyArticlesWithAI(freshRss);
+          cachedLiveRss = verifiedRss;
+          lastRssFetchTime = now;
+
+          // Store verified AI fact-checked news into Supabase DB
+          await storeVerifiedArticlesInSupabase(verifiedRss);
+
+          articles = [...verifiedRss, ...articles];
+        }
       }
     }
 
@@ -49,6 +69,10 @@ export async function GET(req: NextRequest) {
       success: true,
       count: articles.length,
       articles
+    }, {
+      headers: {
+        'Cache-Control': 'public, max-age=180, s-maxage=300, stale-while-revalidate=600',
+      }
     });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });

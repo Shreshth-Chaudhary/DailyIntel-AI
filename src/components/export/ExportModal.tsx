@@ -16,7 +16,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose }) => 
   if (!isOpen) return null;
 
   const handleCopyMarkdown = () => {
-    const text = `# Morning Intelligence Brief — 22 July 2026\n\n` +
+    const text = `# Morning Intelligence Brief - 22 July 2026\n\n` +
       `## Key Highlights\n` +
       `- DRDO VSHORADS Air Defence Test\n` +
       `- RBI Repo Rate Held at 6.50%\n` +
@@ -43,52 +43,68 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose }) => 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-      <div className="relative w-full max-w-md rounded-2xl border border-bloomberg-border bg-bloomberg-card p-6 shadow-2xl space-y-5">
-        <div className="flex items-center justify-between border-b border-bloomberg-border pb-3">
-          <h3 className="text-sm font-bold text-white flex items-center gap-2 font-mono">
-            <Share2 size={16} className="text-intel-400" />
-            EXPORT DAILY BRIEFING & NOTES
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65 backdrop-blur-md animate-fade-up">
+      <div 
+        className="relative w-full max-w-md rounded-2xl border border-stone-200 bg-white dark:bg-stone-900 dark:border-stone-800 p-6 shadow-2xl space-y-5"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Modal Header */}
+        <div className="flex items-center justify-between border-b border-stone-200 dark:border-stone-800 pb-3">
+          <h3 className="text-sm font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2 font-mono">
+            <Share2 size={16} className="text-[#7a5c48] dark:text-[#d8c6ba]" />
+            EXPORT DAILY BRIEFING &amp; NOTES
           </h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-white">
+          <button 
+            onClick={onClose} 
+            className="p-1 rounded text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 transition-colors"
+          >
             <X size={18} />
           </button>
         </div>
 
+        {/* Channel Selection Grid */}
         <div className="space-y-3 text-xs">
-          <label className="font-semibold text-slate-300 block font-mono">Select Export Channel:</label>
-          <div className="grid grid-cols-2 gap-2">
+          <label className="font-bold text-stone-800 dark:text-stone-200 block font-mono">
+            Select Export Channel:
+          </label>
+          <div className="grid grid-cols-2 gap-2.5">
             {[
               { id: 'notion', label: '📓 Notion Page', desc: 'Sync to Notion DB' },
               { id: 'telegram', label: '✈️ Telegram Channel', desc: 'Post to Channel' },
               { id: 'email', label: '📧 Morning Email', desc: 'Send PDF / HTML' },
               { id: 'discord', label: '💬 Discord Webhook', desc: 'Post to Server' },
               { id: 'whatsapp', label: '📱 WhatsApp Digest', desc: 'Send Quick Text' },
-            ].map(item => (
-              <button
-                key={item.id}
-                onClick={() => setSelectedChannel(item.id as any)}
-                className={`p-3 rounded-xl border text-left transition-all space-y-1 ${
-                  selectedChannel === item.id
-                    ? 'border-intel-500 bg-intel-600/20 text-white font-semibold'
-                    : 'border-slate-800 bg-slate-900/60 text-slate-400 hover:border-slate-700'
-                }`}
-              >
-                <div className="font-bold">{item.label}</div>
-                <div className="text-[10px] text-slate-400">{item.desc}</div>
-              </button>
-            ))}
+            ].map(item => {
+              const isSelected = selectedChannel === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => setSelectedChannel(item.id as any)}
+                  className={`p-3 rounded-xl border text-left transition-all space-y-1 ${
+                    isSelected
+                      ? 'border-[#7a5c48] bg-[#7a5c48]/10 text-stone-900 ring-1 ring-[#7a5c48] dark:border-[#d8c6ba] dark:bg-[#d8c6ba]/15 dark:text-stone-100 dark:ring-[#d8c6ba] font-bold'
+                      : 'border-stone-200 bg-stone-50 text-stone-700 hover:bg-stone-100 hover:border-stone-300 dark:border-stone-800 dark:bg-stone-800/60 dark:text-stone-300 dark:hover:bg-stone-800 dark:hover:border-stone-700'
+                  }`}
+                >
+                  <div className="font-bold text-xs">{item.label}</div>
+                  <div className={`text-[10px] ${isSelected ? 'text-[#7a5c48] dark:text-[#d8c6ba] font-semibold' : 'text-stone-500 dark:text-stone-400'}`}>
+                    {item.desc}
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        <div className="pt-2 flex flex-col gap-2">
+        {/* Action Buttons */}
+        <div className="pt-2 flex flex-col gap-2.5">
           <button
             onClick={handleExportTrigger}
-            className="w-full py-2.5 rounded-xl bg-intel-600 text-white text-xs font-semibold hover:bg-intel-500 transition-all flex items-center justify-center gap-2 shadow-lg"
+            className="w-full py-2.5 rounded-xl bg-[#7a5c48] hover:bg-[#684c3b] text-white dark:bg-[#d8c6ba] dark:hover:bg-[#c8b6a9] dark:text-stone-950 text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-md"
           >
             {exported ? (
               <>
-                <CheckCircle2 size={16} className="text-emerald-300" />
+                <CheckCircle2 size={16} className="text-emerald-300 dark:text-emerald-800" />
                 Dispatched to {selectedChannel.toUpperCase()}!
               </>
             ) : (
@@ -101,7 +117,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose }) => 
 
           <button
             onClick={handleCopyMarkdown}
-            className="w-full py-2 rounded-xl border border-slate-800 bg-slate-900 text-slate-300 text-xs font-medium hover:bg-slate-800 transition-all flex items-center justify-center gap-2"
+            className="w-full py-2.5 rounded-xl border border-stone-300 bg-stone-100 text-stone-800 hover:bg-stone-200 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-200 dark:hover:bg-stone-700 text-xs font-semibold transition-all flex items-center justify-center gap-2"
           >
             <Copy size={14} />
             {copied ? 'Copied Markdown to Clipboard!' : 'Copy Raw Markdown Digest'}
